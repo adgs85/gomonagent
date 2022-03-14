@@ -2,8 +2,8 @@ package diskstats
 
 import (
 	"io/ioutil"
-	"log"
 
+	"github.com/adgs85/gomonagent/agentlogger"
 	"github.com/adgs85/gomonmarshalling/monmarshalling"
 
 	"github.com/ricochet2200/go-disk-usage/du"
@@ -12,7 +12,7 @@ import (
 func CollectDiskInfo(path string, sink func(stat monmarshalling.Stat)) {
 	fileInfo, err := ioutil.ReadDir(path)
 	if err != nil {
-		log.Fatalln(err)
+		agentlogger.Logger().Fatalln(err)
 	}
 	arr := []DiskStatPayload{}
 	for _, file := range fileInfo {

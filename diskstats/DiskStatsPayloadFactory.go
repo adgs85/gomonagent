@@ -2,8 +2,8 @@ package diskstats
 
 import (
 	"encoding/json"
-	"log"
 
+	"github.com/adgs85/gomonagent/agentlogger"
 	"github.com/adgs85/gomonmarshalling/monmarshalling"
 )
 
@@ -34,7 +34,7 @@ func NewDiskStateEntry(diskSize uint64, diskSpaceAvailable uint64, storagePath s
 func CreatePayload(metaData monmarshalling.MetaData, statsArr []DiskStatPayload) monmarshalling.Stat {
 	payload, err := json.Marshal(statsArr)
 	if err != nil {
-		log.Fatalln(err)
+		agentlogger.Logger().Fatalln(err)
 	}
 	return monmarshalling.Stat{MetaData: metaData, Payload: string(payload)}
 }
