@@ -11,7 +11,9 @@ import (
 	//"github.com/adgs85/gomonmarshalling/monmarshalling"
 	"github.com/davecgh/go-spew/spew"
 
+	"github.com/adgs85/gomonagent/agentmessagesdispatcher"
 	"github.com/adgs85/gomonagent/diskstats"
+
 	"github.com/adgs85/gomonmarshalling/monmarshalling/envconfig"
 )
 
@@ -31,5 +33,5 @@ func main() {
 	fmt.Println(spew.Sdump((envconfig.GetViperConfig().GetString("disk_polling_rate_ms"))))
 	fmt.Printf("Hostname: %s %v\n", hostname, now)
 
-	diskstats.New()
+	diskstats.New(agentmessagesdispatcher.Dispatch)
 }

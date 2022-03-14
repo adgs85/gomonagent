@@ -1,11 +1,8 @@
 package diskstats
 
 import (
-	"fmt"
-
-	"github.com/adgs85/gomonmarshalling/monmarshalling"
+	"github.com/adgs85/gomonagent/agentmessagesdispatcher"
 	"github.com/adgs85/gomonmarshalling/monmarshalling/envconfig"
-	"github.com/davecgh/go-spew/spew"
 )
 
 type DiskCollectorConfig struct {
@@ -23,11 +20,7 @@ func initConfig() DiskCollectorConfig {
 
 var cfg DiskCollectorConfig = initConfig()
 
-func New() {
+func New(sink agentmessagesdispatcher.StatSinkFuncType) {
 	path := cfg.DiskFreeSpacePath
 	CollectDiskInfo(path, sink)
-}
-
-func sink(stats monmarshalling.Stat) {
-	fmt.Println(spew.Sdump(stats))
 }

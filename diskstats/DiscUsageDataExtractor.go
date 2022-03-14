@@ -4,12 +4,12 @@ import (
 	"io/ioutil"
 
 	"github.com/adgs85/gomonagent/agentlogger"
-	"github.com/adgs85/gomonmarshalling/monmarshalling"
+	"github.com/adgs85/gomonagent/agentmessagesdispatcher"
 
 	"github.com/ricochet2200/go-disk-usage/du"
 )
 
-func CollectDiskInfo(path string, sink func(stat monmarshalling.Stat)) {
+func CollectDiskInfo(path string, sink agentmessagesdispatcher.StatSinkFuncType) {
 	fileInfo, err := ioutil.ReadDir(path)
 	if err != nil {
 		agentlogger.Logger().Fatalln(err)
@@ -22,5 +22,4 @@ func CollectDiskInfo(path string, sink func(stat monmarshalling.Stat)) {
 	}
 
 	sink(CreatePayload(NewDiskStatMetadata(cfg), arr))
-
 }
