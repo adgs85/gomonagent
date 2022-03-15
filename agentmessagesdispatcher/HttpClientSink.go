@@ -67,7 +67,11 @@ func (client *httpClient) post(stat *monmarshalling.Stat) {
 }
 
 func buildUrl(client *httpClient, stat *monmarshalling.Stat) string {
-	return client.baseUrl + "/" + stat.MetaData.MessageType + "/" + stat.MetaData.StatType
+	url := client.baseUrl + "/" + stat.MetaData.MessageType
+	if len(stat.MetaData.StatType) > 0 {
+		return url + "/" + stat.MetaData.StatType
+	}
+	return url
 }
 
 func StartHttpClientSenderLoopReturnSink() StatSinkFuncType {
