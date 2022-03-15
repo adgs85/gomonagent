@@ -15,10 +15,13 @@ func newDispatcherArray() []StatSinkFuncType {
 	cfg := envconfig.GetViperConfig()
 
 	arr := []StatSinkFuncType{}
-	if !cfg.GetBool(consoleOnlyModeKey) {
-		//TODO add srv sink
+	if cfg.GetBool(consoleOnlyModeKey) {
+		arr = append(arr, SpewToConsoleSink)
+	} else {
+		arr = append(arr, StartHttpClientSenderLoopReturnSink())
+
 	}
-	arr = append(arr, SpewToConsoleSink)
+
 	return arr
 }
 

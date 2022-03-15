@@ -27,14 +27,10 @@ func main() {
 	fmt.Println(spew.Sdump((envconfig.GetViperConfig().GetString("disk_polling_rate_ms"))))
 	fmt.Printf("Hostname: %s %v\n", hostname, now)
 
-	// statChannel := make(chan monmarshalling.Stat)
-
 	var wg sync.WaitGroup
 	wg.Add(1)
 
-	httpClientSink := agentmessagesdispatcher.StartHttpClientSenderLoopReturnSink()
-
-	diskstats.StartDiskInfoLoopGoRoutine(httpClientSink)
+	diskstats.StartDiskInfoLoopGoRoutine(agentmessagesdispatcher.Dispatch)
 
 	wg.Wait()
 }
