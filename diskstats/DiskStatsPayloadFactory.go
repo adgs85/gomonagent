@@ -19,7 +19,7 @@ func NewDiskStatMetadata(config DiskCollectorConfig) monmarshalling.MetaData {
 	metaData := monmarshalling.NewStatsMetaDataWithTs()
 	metaData.StatType = DiskSpaceStatType
 	metaData.PollRateMs = config.DiskPollingRateMs
-	metaData.HostName = config.StatsConfig.HostName
+	metaData.HostName = config.HostName
 	return *metaData
 }
 
