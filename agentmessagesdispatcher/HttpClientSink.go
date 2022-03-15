@@ -3,7 +3,6 @@ package agentmessagesdispatcher
 import (
 	"bytes"
 	"encoding/json"
-	"log"
 	"net/http"
 	"time"
 
@@ -12,10 +11,13 @@ import (
 	"github.com/adgs85/gomonmarshalling/monmarshalling"
 )
 
+var logger = agentlogger.Logger()
+
 type httpClient struct {
-	clientChannel chan monmarshalling.Stat
-	clientSink    StatSinkFuncType
-	baseUrl       string
+	clientChannel      chan monmarshalling.Stat
+	clientSink         StatSinkFuncType
+	baseUrl            string
+	httpClientInstance *http.Client
 }
 
 func (client *httpClient) GetStatSink() StatSinkFuncType {
@@ -42,21 +44,21 @@ func (client *httpClient) post(stat *monmarshalling.Stat) {
 	json_data, err := json.Marshal(stat)
 
 	if err != nil {
-		agentlogger.Logger().Fatalln(err)
+		logger.Fatalln(err)
 	}
 
 	url := buildUrl(client, stat)
-	println("%%%%%%%%%" + url)
+
 	resp, err := http.Post(url, "application/json",
 		bytes.NewBuffer(json_data))
 
 	if err != nil {
-		agentlogger.Logger().Println(err)
+		logger.Println(err, "Event lost!")
 		return
 	}
 
-	if resp.StatusCode != 202 {
-		agentlogger.Logger().Println("WARN unexpected http status code:", resp.StatusCode)
+	if resp.StatusCode >= 300 {
+		logger.Println("WARN unexpected http status code:", resp.StatusCode, "Event lost!")
 	}
 
 	if resp.Body != nil {
@@ -69,16 +71,22 @@ func buildUrl(client *httpClient, stat *monmarshalling.Stat) string {
 }
 
 func StartHttpClientSenderLoopReturnSink() StatSinkFuncType {
+	cfg := agentconfiguration.GlobalCfg()
+
+	println("Starting http client loop with base url:", cfg.ServerUrl)
 	warnInactivityMinutes := 2
-	baseUrl := agentconfiguration.GlobalCfg().ServerUrl
+	baseUrl := cfg.ServerUrl
 	hClient := NewHttpClient(baseUrl)
 	go func() {
+		hClient.httpClientInstance = &http.Client{
+			Timeout: time.Duration(cfg.RequestTimeoutSec) * time.Second,
+		}
 		for {
 			select {
 			case stat := <-hClient.clientChannel:
 				hClient.post(&stat)
 			case <-time.After(time.Duration(warnInactivityMinutes) * time.Minute):
-				log.Println("WARN nothing to post to server for", warnInactivityMinutes, "minutes")
+				logger.Println("WARN nothing to post to server for", warnInactivityMinutes, "minutes")
 			}
 		}
 	}()
