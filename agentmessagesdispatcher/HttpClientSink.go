@@ -58,7 +58,7 @@ func (client *httpClient) post(stat *monmarshalling.Stat) {
 	}
 
 	if resp.StatusCode >= 300 {
-		logger.Println("WARN unexpected http status code:", resp.StatusCode, "Event lost!")
+		logger.Println("WARN Request to", url, "received", resp.StatusCode, "http status.", "Event lost!")
 	}
 
 	if resp.Body != nil {
