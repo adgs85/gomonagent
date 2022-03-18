@@ -1,5 +1,8 @@
 FROM alpine:latest
+WORKDIR /app
 
-RUN apk add --no-cache bash
+COPY ./*.env .
 
-CMD ["bash", "-c", "\"echo OK\""]
+COPY gomonagent .
+
+CMD ["./gomonagent"]
