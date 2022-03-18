@@ -27,9 +27,13 @@ func collectDiskInfo(path string, sink agentmessagesdispatcher.StatSinkFuncType)
 	}
 	arr := []DiskStatPayload{}
 	for _, file := range fileInfo {
-		fullPath := path + "/" + file.Name()
-		dUsage := du.NewDiskUsage(fullPath)
-		arr = append(arr, NewDiskStateEntry(dUsage.Size(), dUsage.Available(), fullPath))
+		if file.IsDir() {
+			fullPath := path + "/" + file.Name()
+			dUsage := du.NewDiskUsage(fullPath)
+			arr = append(arr, NewDiskStateEntry(dUsage.Size(), dUsage.Available(), fullPath))
+		} else {
+			agentlogger.Logger().Println("WARN files found in", path)
+		}
 	}
 
 	return CreatePayload(NewDiskStatMetadata(cfg), arr)
