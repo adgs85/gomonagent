@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+
+  agent:
+    image: adgs85/gomonagent:1.0.2
+    restart: always
+    environment:
+      STATS_SERVER_URL: "http://stats.server:8080"
+    extra_hosts:
+      stats.server: "172.17.0.1"
+    volumes:
+      - /mnt:/mnt
