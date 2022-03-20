@@ -8,13 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/adgs85/gomonagent/agentlogger"
 	"github.com/adgs85/gomonagent/agentmessagesdispatcher"
 )
 
-var logger = agentlogger.Logger()
-
-func StartCpuUsageInfoLoop(sink agentmessagesdispatcher.StatSinkFuncType) {
+func startCpuUsageInfoLoop(sink agentmessagesdispatcher.StatSinkFuncType) {
 	go func() {
 		collectTotalCpuUsage(sink)
 	}()
