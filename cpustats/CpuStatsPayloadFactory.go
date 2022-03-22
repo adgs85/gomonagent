@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/adgs85/gomonagent/agentconfiguration"
 	"github.com/adgs85/gomonagent/agentlogger"
 	"github.com/adgs85/gomonmarshalling/monmarshalling"
 )
@@ -33,7 +34,7 @@ func newStat() *monmarshalling.Stat {
 	statsMetadata := monmarshalling.NewStatsMetaDataWithTs()
 	statsMetadata.StatType = CpuUsagesStatType
 	statsMetadata.PollRateMs = hardCodedCpuPollRateMs
-	statsMetadata.HostName = cpuStatCfg.StatsConfig.HostName
+	statsMetadata.HostName = agentconfiguration.GlobalCfg().HostName
 	stat := monmarshalling.Stat{MetaData: *statsMetadata}
 	return &stat
 }

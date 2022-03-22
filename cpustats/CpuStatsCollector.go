@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/adgs85/gomonagent/agentconfiguration"
 	"github.com/adgs85/gomonagent/agentmessagesdispatcher"
 )
 
@@ -19,7 +20,7 @@ func startCpuUsageInfoLoop(sink agentmessagesdispatcher.StatSinkFuncType) {
 
 func collectTotalCpuUsage(sink agentmessagesdispatcher.StatSinkFuncType) {
 
-	file, err := os.Open(cpuStatCfg.CpuStatsPath)
+	file, err := os.Open(agentconfiguration.GlobalCfg().CpuStatsPath)
 	if err != nil {
 		logger.Fatalln(err)
 	}

@@ -3,13 +3,20 @@ package main
 import (
 	"sync"
 
+	"github.com/adgs85/gomonagent/agentconfiguration"
 	"github.com/adgs85/gomonagent/agentheartbeat"
 	"github.com/adgs85/gomonagent/agentmessagesdispatcher"
 	"github.com/adgs85/gomonagent/cpustats"
 	"github.com/adgs85/gomonagent/diskstats"
+	"github.com/adgs85/gomonmarshalling/monmarshalling/envconfig"
 )
 
 func main() {
+
+	agentconfiguration.InitConfig(func(cfg *agentconfiguration.AgentConfig) {
+		envconfig.GetViperConfig().Unmarshal(&cfg)
+	})
+
 	var wg sync.WaitGroup
 	wg.Add(1)
 
@@ -22,8 +29,10 @@ func startStatCollectors() {
 
 	agentheartbeat.StartHeartBeat()
 
-	diskstats.StartDiskInfoLoopGoRoutine(agentmessagesdispatcher.Dispatch)
+	dispatcher := agentmessagesdispatcher.NewDispatcher()
 
-	cpustats.StartCpuUsageInfoLoop(agentmessagesdispatcher.Dispatch)
+	diskstats.StartDiskInfoLoopGoRoutine(dispatcher.Dispatch)
+
+	cpustats.StartCpuUsageInfoLoop(dispatcher.Dispatch)
 
 }

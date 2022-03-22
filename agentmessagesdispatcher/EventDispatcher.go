@@ -1,21 +1,31 @@
 package agentmessagesdispatcher
 
 import (
+	"github.com/adgs85/gomonagent/agentconfiguration"
 	"github.com/adgs85/gomonmarshalling/monmarshalling"
-	"github.com/adgs85/gomonmarshalling/monmarshalling/envconfig"
 )
-
-const consoleOnlyModeKey = "console_only_mode"
-
-var sinkArray []StatSinkFuncType = newDispatcherArray()
 
 type StatSinkFuncType = func(stat monmarshalling.Stat)
 
-func newDispatcherArray() []StatSinkFuncType {
-	cfg := envconfig.GetViperConfig()
+type EventDispatcher interface {
+	Dispatch(stat monmarshalling.Stat)
+}
 
+type dispatcher struct {
+	sinkArray []StatSinkFuncType
+}
+
+func (d dispatcher) Dispatch(stat monmarshalling.Stat) {
+	dispatch(stat, d.sinkArray)
+}
+
+func NewDispatcher() EventDispatcher {
+	return dispatcher{newDispatcherArray()}
+}
+
+func newDispatcherArray() []StatSinkFuncType {
 	arr := []StatSinkFuncType{}
-	if cfg.GetBool(consoleOnlyModeKey) {
+	if agentconfiguration.GlobalCfg().ConsoleOnlyMode {
 		arr = append(arr, SpewToConsoleSink)
 	} else {
 		arr = append(arr, StartHttpClientSenderLoopReturnSink())
@@ -25,7 +35,7 @@ func newDispatcherArray() []StatSinkFuncType {
 	return arr
 }
 
-func Dispatch(stat monmarshalling.Stat) {
+func dispatch(stat monmarshalling.Stat, sinkArray []StatSinkFuncType) {
 	for _, f := range sinkArray {
 		f(stat)
 	}
