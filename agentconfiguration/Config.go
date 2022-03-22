@@ -4,6 +4,8 @@ import (
 	"github.com/adgs85/gomonmarshalling/monmarshalling/envconfig"
 )
 
+type AgentConfigAcceptor = func(*AgentConfig)
+
 var globalCfg *AgentConfig
 
 type AgentConfig struct {
@@ -40,7 +42,7 @@ func GlobalCfg() *AgentConfig {
 	return globalCfg
 }
 
-func InitConfig(initFunc func(*AgentConfig)) {
+func InitConfig(initFunc AgentConfigAcceptor) {
 	cfg := AgentConfig{}
 	initFunc(&cfg)
 	globalCfg = &cfg
