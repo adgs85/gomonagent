@@ -3,6 +3,7 @@ package diskstats
 import (
 	"encoding/json"
 
+	"github.com/adgs85/gomonagent/agentconfiguration"
 	"github.com/adgs85/gomonagent/agentlogger"
 	"github.com/adgs85/gomonmarshalling/monmarshalling"
 )
@@ -15,7 +16,7 @@ type DiskStatPayload struct {
 	StoragePath string
 }
 
-func NewDiskStatMetadata(config DiskCollectorConfig) monmarshalling.MetaData {
+func NewDiskStatMetadata(config *agentconfiguration.AgentConfig) monmarshalling.MetaData {
 	metaData := monmarshalling.NewStatsMetaDataWithTs()
 	metaData.StatType = DiskSpaceStatType
 	metaData.PollRateMs = config.DiskPollingRateMs

@@ -2,15 +2,16 @@ package agentconfiguration
 
 import (
 	"github.com/adgs85/gomonmarshalling/monmarshalling/envconfig"
-	"github.com/davecgh/go-spew/spew"
 )
 
 var globalCfg *AgentConfig
 
 type AgentConfig struct {
-	envconfig.StatsConfig `mapstructure:",squash"`
-	eventDispatcherConfig `mapstructure:",squash"`
-	cpuCollectorConfig    `mapstructure:",squash"`
+	envconfig.StatsConfig        `mapstructure:",squash"`
+	eventDispatcherConfig        `mapstructure:",squash"`
+	cpuCollectorConfig           `mapstructure:",squash"`
+	statChannelSinkFactoryConfig `mapstructure:",squash"`
+	diskCollectorConfig          `mapstructure:",squash"`
 }
 
 type eventDispatcherConfig struct {
@@ -20,6 +21,15 @@ type eventDispatcherConfig struct {
 type cpuCollectorConfig struct {
 	CpuStatsPath       string `mapstructure:"cpu_stats_path"`
 	UsePortableCpuStat bool   `mapstructure:"cpu_stats_use_portable"`
+}
+
+type diskCollectorConfig struct {
+	DiskPollingRateMs int    `mapstructure:"disk_polling_rate_ms"`
+	DiskFreeSpacePath string `mapstructure:"disk_free_space_path"`
+}
+
+type statChannelSinkFactoryConfig struct {
+	SenderStatStallMs int `mapstructure:"sender_stall_ms"`
 }
 
 func GlobalCfg() *AgentConfig {
@@ -33,6 +43,5 @@ func GlobalCfg() *AgentConfig {
 func InitConfig(initFunc func(*AgentConfig)) {
 	cfg := AgentConfig{}
 	initFunc(&cfg)
-	println(spew.Sdump(cfg))
 	globalCfg = &cfg
 }

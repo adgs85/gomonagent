@@ -1,7 +1,6 @@
 package agentheartbeat
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/adgs85/gomonagent/agentconfiguration"
@@ -13,7 +12,7 @@ func StartHeartBeat() {
 	cfg := agentconfiguration.GlobalCfg()
 	heartBeatSleep := time.Duration(agentconfiguration.GlobalCfg().HeartBeatSec) * 1000 * time.Millisecond
 	pollRateMs := int(heartBeatSleep.Milliseconds())
-	fmt.Printf("%v", heartBeatSleep)
+
 	go func() {
 		httpClient := agentmessagesdispatcher.NewHttpClient(cfg.ServerUrl)
 

@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"time"
 
+	"github.com/adgs85/gomonagent/agentconfiguration"
 	"github.com/adgs85/gomonagent/agentlogger"
 	"github.com/adgs85/gomonagent/agentmessagesdispatcher"
 	"github.com/adgs85/gomonmarshalling/monmarshalling"
@@ -12,6 +13,7 @@ import (
 )
 
 func StartDiskInfoLoopGoRoutine(sink agentmessagesdispatcher.StatSinkFuncType) {
+	cfg := agentconfiguration.GlobalCfg()
 	go func() {
 		for {
 			sink(collectDiskInfo(cfg.DiskFreeSpacePath, sink))
@@ -36,5 +38,5 @@ func collectDiskInfo(path string, sink agentmessagesdispatcher.StatSinkFuncType)
 		}
 	}
 
-	return CreatePayload(NewDiskStatMetadata(cfg), arr)
+	return CreatePayload(NewDiskStatMetadata(agentconfiguration.GlobalCfg()), arr)
 }
